@@ -12,71 +12,69 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageController = TextEditingController();
   late TwilioChatService twilioChatService;
-  // late ChatServiceInterface twilioChatServiceWeb;
+  // late TwilioChatServiceWeb twilioChatServiceWeb;
   List<dynamic>? messages;
   List<dynamic>? conversations;
   bool? isSuccess;
-  String conversationId = 'conversationId';
+  String conversationId = 'ConversationId';
   String platform = '';
   dynamic conversationObj;
   @override
   void initState() {
     platform = Utils().getPlatform().toLowerCase();
-    // if(platform == 'android'){
-    //   print('platform check');
-    //    twilioChatService = TwilioChatService();
-    //   initializeTwilioAndroid();
-    // }
-    // else if(platform =='web'){
-    //   twilioChatServiceWeb  = WebInterface().getTWilioWeb();
-    //   initializeTwilioWeb();
-    // }
+    if(platform == 'android'){
+      // print('platform check');
+       twilioChatService = TwilioChatService();
+      // initializeTwilioAndroid();
+       initializeTwilioWeb();
+    }
+    else if(platform =='web'){
+      twilioChatService = TwilioChatService();
+      initializeTwilioWeb();
+    }
     print("in chat screen");
     super.initState();
   }
 
-  // void initializeTwilioWeb() async{
-  //   final isSuccess = await twilioChatServiceWeb.initConversationClient();
-  //   await Future.delayed(Duration(seconds: 3));
-  //   if(isSuccess){
-  //     // await twilioChatServiceWeb.createConversation();
-  //     await Future.delayed(Duration(seconds: 3));
-  //     final conversation = await twilioChatServiceWeb.joinConversation(conversationId);
-  //     await twilioChatServiceWeb.addParticipant(conversation,identity);
-  //     await twilioChatServiceWeb.subscribeAndSetListener(conversation);
-  //     conversationObj = conversation;
-  //   }
-  //
-  // }
-
-  void initializeTwilioAndroid() async{
-     isSuccess = await twilioChatService.initTwilio();
-    // messages = await twilioChatService.getMessages('1234');
-    print('is Initialization success : $isSuccess');
-    await setupConversation(isSuccess ?? false);
-  }
-
-  Future<void> createConversation()async{
-    if(isSuccess == true){
-      // await twilioChatService.createConversation('conversation_4','conversation_@4');
-      conversations = await twilioChatService.getConversationList();
-      print('conversation list : $conversations');
-      // await twilioChatService.joinConversation();
-      // await Future.delayed(Duration(seconds: 3));
-      // await twilioChatService.addParticipant();
-    }
-  }
-  Future<void> setupConversation(bool isSuccess)async{
-    if(isSuccess){
-      // conversationId = await twilioChatService.createConversation('conversation_6','conversation_@6');
-      conversations = await twilioChatService.getConversationList();
-      print('conversation list : $conversations');
-      await twilioChatService.joinConversation(conversationId);
+  void initializeTwilioWeb() async{
+    await twilioChatService.initialize();
+    // await Future.delayed(Duration(seconds: 3));
+    //   await twilioChatService.createConversation();
       await Future.delayed(Duration(seconds: 3));
-      await twilioChatService.addParticipant(conversationId);
-      await twilioChatService.subscribeToConversation(conversationId);
-    }
+      // await twilioChatService.joinConversation(conversationId);
+      // await twilioChatService.addParticipant(conversationId,identity);
+      twilioChatService.registerMessageListener();
+
   }
+
+  // void initializeTwilioAndroid() async{
+  //    isSuccess = await twilioChatService.initTwilio();
+  //   // messages = await twilioChatService.getMessages('1234');
+  //   print('is Initialization success : $isSuccess');
+  //   await setupConversation(isSuccess ?? false);
+  // }
+  //
+  // Future<void> createConversation()async{
+  //   if(isSuccess == true){
+  //     // await twilioChatService.createConversation('conversation_4','conversation_@4');
+  //     conversations = await twilioChatService.getConversationList();
+  //     print('conversation list : $conversations');
+  //     // await twilioChatService.joinConversation();
+  //     // await Future.delayed(Duration(seconds: 3));
+  //     // await twilioChatService.addParticipant();
+  //   }
+  // }
+  // Future<void> setupConversation(bool isSuccess)async{
+  //   if(isSuccess){
+  //     // conversationId = await twilioChatService.createConversation('conversation_6','conversation_@6');
+  //     conversations = await twilioChatService.getConversationList();
+  //     print('conversation list : $conversations');
+  //     await twilioChatService.joinConversation(conversationId);
+  //     await Future.delayed(Duration(seconds: 3));
+  //     await twilioChatService.addParticipant(conversationId);
+  //     await twilioChatService.subscribeToConversation(conversationId);
+  //   }
+  // }
 
 
   @override
@@ -99,11 +97,11 @@ class _ChatScreenState extends State<ChatScreen> {
             ElevatedButton(
               onPressed: ()async{
                 if(platform == 'web'){
-                  // twilioChatServiceWeb.sendMessage(conversationObj, messageController.text);
+                  twilioChatService.sendMessage(conversationId, messageController.text);
                 }
                 else if(platform == 'android'){
-                  await twilioChatService.sendMessage(
-                      messageController.text, conversationId);
+                  // await twilioChatService.sendMessage(
+                  //     messageController.text, conversationId);
                 }
                 else{
 
@@ -115,7 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ElevatedButton(
               onPressed: ()async{
                 if(platform == 'android'){
-                  await twilioChatService.getMessages(conversationId);
+                  // await twilioChatService.getMessages(conversationId);
                 }
               },
               child: Text('get messages'),
@@ -123,8 +121,8 @@ class _ChatScreenState extends State<ChatScreen> {
             ElevatedButton(
               onPressed: ()async{
                 if(platform == 'android'){
-                  final list = await twilioChatService.getConversationList();
-                  print("conversation list : $list");
+                  // final list = await twilioChatService.getConversationList();
+                  // print("conversation list : $list");
                 }
               },
               child: Text('get conversations'),
@@ -132,7 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ElevatedButton(
               onPressed: ()async{
                 if(platform == 'android'){
-                  await createConversation();
+                  // await createConversation();
                 }
               },
               child: Text('create conversations'),
@@ -140,8 +138,8 @@ class _ChatScreenState extends State<ChatScreen> {
             ElevatedButton(
               onPressed: ()async{
                 if(platform == 'android'){
-                  await twilioChatService.subscribeToConversation(
-                      conversationId);
+                  // await twilioChatService.subscribeToConversation(
+                  //     conversationId);
                 }
                 else if(platform == 'web'){
                   // await twilioChatServiceWeb.subscribeAndSetListener(conversationObj);

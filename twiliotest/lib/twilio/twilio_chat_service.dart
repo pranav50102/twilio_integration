@@ -1,82 +1,74 @@
-import 'package:twilio_chat_conversation/twilio_chat_conversation.dart';
+import 'package:flutter/foundation.dart' as kWeb; // for kIsWeb
 import 'package:twiliotest/identity.dart';
+import 'package:twiliotest/twilio/twilio_interop.dart';
 
-import 'access_tokn.dart';
+class TwilioChatService {
+  final TwilioWebInterop _twilio = TwilioWebInterop();
 
-class TwilioChatService{
-
-  late TwilioChatConversation twilioChat;
-
-
-
-  Future<bool> initTwilio() async {
-    try {
-      twilioChat = TwilioChatConversation();
-      // Use the Twilio helper libraries in your back end web services to create access tokens for both Android and iOS platform. However you can use this method to generate access token for Android.
-      // final token = AccessToken().generateAccessToken(identity: 'user_1');
-      final token = await twilioChat.generateToken(accountSid: 'accountSid', apiKey: 'apiKey', apiSecret: 'apiSecret', identity: identity, serviceSid: 'serviceSid');
-      print("access token : $token");
-      final result = await twilioChat.initializeConversationClient(accessToken: token ?? '');
-      print("in initTwilio");
-      print("twilio initialization result ${result}");
-      if(result?.toLowerCase() == 'authentication failed'){
-        return false;
-      }
-      else{
-        return true;
-      }
-    } on Exception catch (e) {
-      print("twilio initialization error : $e");
-      return false;
-    }
+  Future<void> initialize() async {
+    print('Token: $accessToken');
+    final result = await _twilio.initialize(accessToken);
+    print('Initialized: $result');
   }
 
-  Future<String> createConversation(String conversationName,String identity)async{
-    print('in create conversation');
-    final String? result = await twilioChat.createConversation(conversationName:conversationName, identity: identity);
-    print("create conversation result ${result}");
-    return result ?? '';
+  Future<void> createConversation({
+    String? uniqueName,
+    String? friendlyName,
+    bool isPrivate = false,
+  }) async {
+    final result = await _twilio.createConversation(
+      uniqueName: conversation,
+      friendlyName: conversation,
+      isPrivate: isPrivate,
+    );
+    print('Created conversation: $result');
   }
 
-  Future<void> joinConversation(String conversationId)async{
-    final String? result = await twilioChat.joinConversation(conversationId: conversationId);
-    print("join conversation result ${result}");
+  Future<void> addParticipant(String conversationSid, String identity) async {
+    final result = await _twilio.addParticipant(conversationSid, identity);
+    print('Added participant: $result');
   }
 
-  Future<List<dynamic>> getConversationList()async{
-    final result = await twilioChat.getConversations() ?? [];
-    print("get conversation result ${result}");
-    return result;
+  Future<void> joinConversation(String sid) async {
+    await _twilio.joinConversation(sid);
+    print('Joined conversation: $sid');
   }
 
-  Future<void> subscribeToConversation(String conversationId)async{
-    // final result = await twilioChat.receiveMessages(conversationId: conversationId);
-    twilioChat.subscribeToMessageUpdate(conversationSid: conversationId);
-    // print("receive message result ${result}");
-    twilioChat.onMessageReceived.listen((val){
-      print("message received : ${val}");
+  Future<void> leaveConversation(String sid) async {
+    await _twilio.leaveConversation(sid);
+    print('Left conversation: $sid');
+  }
+
+  Future<void> sendMessage(String sid, String message) async {
+    await _twilio.sendMessage(sid, message);
+    print('Sent message: "$message" to conversation: $sid');
+  }
+
+  Future<void> getMessages(String sid, {int limit = 50}) async {
+    final messages = await _twilio.getMessages(sid, limit);
+    print('Messages: $messages');
+  }
+
+  Future<void> getSubscribedConversations() async {
+    final conversations = await _twilio.getSubscribedConversations();
+    print('Subscribed conversations: $conversations');
+  }
+
+  Future<void> getConversationBySid(String sid) async {
+    final conversation = await _twilio.getConversationBySid(sid);
+    print('Conversation by SID: $conversation');
+  }
+
+  Future<void> subscribeToConversation(String conversationSid) async {
+    _twilio.subscribeToConversation(conversationSid);
+    print('Subscribed to conversation updates for: $conversationSid');
+  }
+
+  void registerMessageListener() {
+    _twilio.registerMessageListener((message) {
+      print('Message received: $message');
     });
-    // print("receive message result ${result}");
+    print('Message listener registered.');
   }
-
-  Future<List<dynamic>> getMessages(String conversationId)async{
-    final result = await twilioChat.getMessages(conversationId: conversationId) ?? [];
-    print("get message result ${result}");
-    return result;
-  }
-
-  Future<void> sendMessage(String message,conversationId)async{
-    final result = await twilioChat.sendMessage(message:message,conversationId:conversationId);
-    print("send message result ${result}");
-  }
-  Future<void> addParticipant(String conversationId)async{
-    print("in add participant");
-    try {
-      final String? result = await twilioChat.addParticipant(participantName:identity,conversationId:conversationId);
-      print("send message result ${result}");
-    } on Exception catch (e) {
-      print("Add participant exception : $e");
-    }
-  }
-
 }
+

@@ -1,27 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="//media.twiliocdn.com/sdk/js/video/releases/2.14.0/twilio-video.min.js"></script>
-  <script src="https://media.twiliocdn.com/sdk/js/conversations/v2.4/twilio-conversations.min.js"></script>
-
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
+  <base href="$FLUTTER_BASE_HREF">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -34,8 +17,15 @@
 
   <title>twiliotest</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Twilio Conversations SDK -->
+  <script src="https://media.twiliocdn.com/sdk/js/conversations/v2.4/twilio-conversations.min.js"></script>
+  <script src="twilio_wrapper.js"></script>
+  <script>
+    console.log("JS initTwilio loaded:", typeof window.initTwilio);
+  </script>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+<script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

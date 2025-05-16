@@ -1,5 +1,5 @@
-final String identity = "username";
-// final String conversation = "conversation_@3";
+final String identity = "user";
+final String conversation = "conversation";
 // final String conversation = 'conversationid';
-// final String accessToken = 'usertoken2';
-final String accessToken = 'usertoken2';
+final String accessToken = 'accesstoken';
+// final String accessToken = 'access;

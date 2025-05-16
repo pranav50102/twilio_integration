@@ -24,6 +24,7 @@ class _InitialscreenState extends State<Initialscreen> {
                     MaterialPageRoute(
                         builder:(context){
                       return ChatScreen();
+                          // return Container();
                     }),
                   );
                 },
@@ -31,12 +32,12 @@ class _InitialscreenState extends State<Initialscreen> {
             ),
             ElevatedButton(
                 onPressed: (){
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder:(context){
-                      return CallScreen();
-                    }),
-                  );
+                  // Navigator.of(context).push(
+                  //   MaterialPageRoute(
+                  //       builder:(context){
+                  //     return CallScreen();
+                  //   }),
+                  // );
                 },
                 child: Text('call'),
             ),
